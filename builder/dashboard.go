@@ -60,8 +60,10 @@ func CreateDashboard(f *hclwrite.File, dashboard *dashboard.Dashboard, client *s
 		variableBody.SetAttributeValue("property", cty.StringVal(variable.Property))
 		variableBody.SetAttributeValue("description", cty.StringVal(variable.Description))
 		variableBody.SetAttributeValue("alias", cty.StringVal(variable.Alias))
-		variableBody.SetAttributeValue("values", variableValueProc(variable))
 		variableBody.SetAttributeValue("value_required", cty.BoolVal(variable.Required))
+		if variable.Required {
+			variableBody.SetAttributeValue("values", variableValueProc(variable))
+		}
 		variableBody.SetAttributeValue("replace_only", cty.BoolVal(variable.ReplaceOnly))
 		variableBody.SetAttributeValue("apply_if_exist", cty.BoolVal(variable.ApplyIfExists))
 

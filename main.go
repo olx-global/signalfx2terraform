@@ -32,26 +32,27 @@ func main() {
 	dashboardIDPtr := flag.String("dashboard", "", "Dashboard ID, without URL")
 	detectorIDPtr := flag.String("detector", "", "Detector ID, without URL")
 	versionPtr := flag.Bool("v", false, "Prints current exporter version")
+	versionLongPtr := flag.Bool("version", false, "Prints current exporter version")
 	flag.Parse()
-	if *versionPtr {
+	if *versionPtr || *versionLongPtr {
 		fmt.Printf("Version: %s\r\n", version)
 		os.Exit(0)
 	}
 
 	signalfxAPIToken = *signalfxAPITokenPtr
 	if signalfxAPIToken == "" {
-		log.Fatal("Can't find token, please point that")
+		usagePrint("Can't find token")
 	}
 	// TODO: Simplify that
 	dashboardID = *dashboardIDPtr
 	detectorID = *detectorIDPtr
 
 	if dashboardID != "" && detectorID != "" {
-		log.Fatal("Please choose one - dashboard or detector.")
+		usagePrint("Please choose one - dashboard or detector.")
 	}
 
 	if dashboardID == "" && detectorID == "" {
-		log.Fatal("Can't find any objects for exporting, use dashboard or detector at least. ")
+		usagePrint("Can't find any objects for exporting, use dashboard or detector at least. ")
 	}
 
 	if dashboardID != "" {
@@ -63,6 +64,23 @@ func main() {
 		detectorProcessor(detectorID, signalfxAPIToken)
 		os.Exit(0)
 	}
+}
+
+func usagePrint(message string) {
+	log.Println(message)
+	fmt.Println(`Usage:
+  -dashboard string
+        Dashboard ID, without URL
+  -detector string
+        Detector ID, without URL
+  -httptest.serve string
+        if non-empty, httptest.NewServer serves on this address and blocks
+  -token string
+        SignalFX Token
+  -v    Prints current exporter version
+  -version
+        Prints current exporter version`)
+	log.Fatal("Exit")
 }
 
 func dashboardProcessor(dashboardID string) {

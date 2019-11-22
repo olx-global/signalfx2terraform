@@ -190,8 +190,25 @@ func ListChart(f *hclwrite.File, chart *chart.Chart) *hclwrite.Body {
 	chartBody.SetAttributeValue("disable_sampling", disableSamplingProc(chart))
 	chartBody.SetAttributeValue("unit_prefix", cty.StringVal(chart.Options.UnitPrefix))
 
+	if chart.Options.ColorBy == "Range" {
+		chartBody.SetAttributeValue("color_range", colorRangeProc(chart))
+	}
+	if chart.Options.ColorBy == "Scale" {
+		chartBody.SetAttributeValue("color_by", cty.StringVal(chart.Options.ColorBy))
+		chartBody.SetAttributeValue("color_scale", colorScale2Proc(chart))
+	}
+
 	chartBody.SetAttributeValue("max_delay", cty.NumberIntVal(maxDelayProc(chart)))
 	chartBody.SetAttributeValue("refresh_interval", cty.NumberIntVal(refreshIntervalProc(chart)))
+	if chart.Options.LegendOptions != nil {
+		for _, field := range chart.Options.LegendOptions.Fields {
+			legendOptionsBlock := chartBody.AppendNewBlock("legend_options_fields", nil)
+			legendOptionsBody := legendOptionsBlock.Body()
+			legendOptionsBody.SetAttributeValue("property", cty.StringVal(field.Property))
+			legendOptionsBody.SetAttributeValue("enabled", cty.BoolVal(field.Enabled))
+		}
+	}
+
 	chartBody.SetAttributeValue("viz_options", shortVizProc(chart))
 	chartBody.AppendNewline()
 	return chartBody
