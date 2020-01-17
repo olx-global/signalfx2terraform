@@ -32,7 +32,9 @@ func maxDelayProc(chart *chart.Chart) int64 {
 }
 
 func maxDelayDetectorProc(detector *detector.Detector) int64 {
-
+	if detector.MaxDelay == nil {
+		return 0
+	}
 	return int64(*detector.MaxDelay / 1000) // Convert to sec
 }
 
