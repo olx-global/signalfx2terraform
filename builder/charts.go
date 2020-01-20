@@ -197,7 +197,7 @@ func ListChart(f *hclwrite.File, chart *chart.Chart) *hclwrite.Body {
 		chartBody.SetAttributeValue("color_by", cty.StringVal(chart.Options.ColorBy))
 		chartBody.SetAttributeValue("color_scale", colorScale2Proc(chart))
 	}
-
+	chartBody.SetAttributeValue("secondary_visualization", cty.StringVal(chart.Options.SecondaryVisualization))
 	chartBody.SetAttributeValue("max_delay", cty.NumberIntVal(maxDelayProc(chart)))
 	chartBody.SetAttributeValue("refresh_interval", cty.NumberIntVal(refreshIntervalProc(chart)))
 	if chart.Options.LegendOptions != nil {
